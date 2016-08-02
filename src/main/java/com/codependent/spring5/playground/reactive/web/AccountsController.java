@@ -12,13 +12,13 @@ import reactor.core.publisher.Flux;
 public class AccountsController {
 	
 	@GetMapping("/accounts/alerts")
-	public Flux<Alert> getAccountAlertsNoPathVariable(/*@PathVariable Long id*/) {
+	public Flux<Alert> getAccountAlertsNoPathVariable() {
 		return Flux.<Alert>just(new Alert((long)1, "Alert message"));
 	}
 	
 	@GetMapping("/accounts/{id}/alerts")
 	public Flux<Alert> getAccountAlertsWithPathVariable(@PathVariable Long id) {
-		return Flux.<Alert>just(new Alert((long)1, "Alert message"));
+		return Flux.<Alert>just(new Alert(id, "Alert message"));
 	}
 	
 	/*@GetMapping("/accounts/{id}/alerts")
