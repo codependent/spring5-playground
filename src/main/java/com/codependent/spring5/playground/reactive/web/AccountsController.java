@@ -1,5 +1,6 @@
 package com.codependent.spring5.playground.reactive.web;
 
+import org.reactivestreams.Subscriber;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,13 +22,13 @@ public class AccountsController {
 		return Flux.<Alert>just(new Alert(id, "Alert message"));
 	}
 	
-	/*@GetMapping("/accounts/{id}/alerts")
-	public Flux<SensorRead> getSensorRead(){
-		//return Flux.<SensorRead>just(new SensorRead("asdf", Math.random()));
-		return new Flux<SensorRead>() {
+	@GetMapping("/accounts/alerts2")
+	public Flux<Alert> getAsyncAlerts(){
+
+		return new Flux<Alert>() {
 
 			@Override
-			public void subscribe(Subscriber<? super SensorRead> s) {
+			public void subscribe(Subscriber<? super Alert> s) {
 				int i = 0;
 				while(++i <= 5){
 					try {
@@ -35,10 +36,10 @@ public class AccountsController {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					s.onNext(new SensorRead("asdf", Math.random()));
+					s.onNext(new Alert((long)1, "my message" + Math.random()));
 				}
 				s.onComplete();
 			}
 		};
-	}*/
+	}
 }
