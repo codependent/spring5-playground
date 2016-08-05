@@ -23,7 +23,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<reactor.version>3.0.0.BUILD-SNAPSHOT</reactor.version>
-		<spring.version>5.0.0.BUILD-SNAPSHOT</spring.version>
+		<spring.version>5.0.0.M1</spring.version>
 	</properties>
 
 	<dependencies>
@@ -31,6 +31,12 @@
 			<groupId>org.springframework.boot.experimental</groupId>
 			<artifactId>spring-boot-starter-web-reactive</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>io.projectreactor.ipc</groupId>
+			<artifactId>reactor-netty</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -41,6 +47,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.testng</groupId>
+		    <artifactId>testng</artifactId>
+		    <version>6.9.10</version>
+		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>
@@ -52,6 +65,38 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 
