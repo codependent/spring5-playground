@@ -10,6 +10,8 @@ public class Alert implements Serializable{
 	
 	private String message;
 
+	public Alert(){}
+	
 	public Alert(Long alertId, String message) {
 		super();
 		this.alertId = alertId;
@@ -32,4 +34,9 @@ public class Alert implements Serializable{
 		this.message = message;
 	}
 
+	@Override
+	public String toString() {
+		return "Alert [alertId=" + alertId + ", message=" + message + "]";
+	}
+	
 }

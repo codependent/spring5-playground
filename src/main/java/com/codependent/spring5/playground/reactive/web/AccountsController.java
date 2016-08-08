@@ -14,7 +14,20 @@ public class AccountsController {
 	
 	@GetMapping("/accounts/alerts")
 	public Flux<Alert> getAccountAlertsNoPathVariable() {
-		return Flux.<Alert>just(new Alert((long)1, "Alert message"));
+		return Flux.fromArray(new Alert[]{new Alert((long)1, "Alert message"), 
+				              		  	  new Alert((long)2, "Alert message2"),
+				              		  	  new Alert((long)3, "Alert message3")})
+				   .delayMillis(1000)
+				   .log();
+	}
+	
+	@GetMapping(value="/accounts/alertsStreaming", headers="accept=text/event-stream")
+	public Flux<Alert> getAccountAlertsNoPathVariableStreaming() {
+		return Flux.fromArray(new Alert[]{new Alert((long)1, "Alert message"), 
+				              			  new Alert((long)2, "Alert message2"),
+				              			  new Alert((long)3, "Alert message3")})
+				   .delayMillis(1000)
+				   .log();
 	}
 	
 	@GetMapping("/accounts/{id}/alerts")

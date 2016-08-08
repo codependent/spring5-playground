@@ -9,33 +9,30 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
-import com.codependent.spring5.playground.reactive.client.RandomNumbersServiceClient;
+import com.codependent.spring5.playground.reactive.client.AccountsServiceClient;
 import com.codependent.spring5.playground.reactive.client.WebClientConfig;
+import com.codependent.spring5.playground.reactive.dto.Alert;
 
 import reactor.core.publisher.Flux;
 
 @Test
-@ContextConfiguration(classes={WebClientConfig.class, RandomNumbersServiceClient.class})
-public class RandomNumbersServiceClientTest extends AbstractTestNGSpringContextTests{
+@ContextConfiguration(classes={WebClientConfig.class, AccountsServiceClient.class})
+public class AccountsServiceClientTest extends AbstractTestNGSpringContextTests{
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
-	private RandomNumbersServiceClient client;
+	private AccountsServiceClient client;
 	
-	public void testNumbersServiceClientTest() throws InterruptedException{
+	public void testAccountAlertsClientTest() throws InterruptedException{
 		
 		CountDownLatch latch = new CountDownLatch(1);
 		
-		Flux<Double> randomNumbers = client.getRandomNumbers("http://localhost:8080");
-		randomNumbers.doOnComplete( () -> {
+		Flux<Alert> alerts = client.getAccountAlerts("http://localhost:8080");
+		alerts.doOnComplete( () -> {
 			latch.countDown();
-		})
-		.doOnError( (e) ->{
-			e.printStackTrace();
-		})
-		.subscribe( (n) -> {
-			logger.info("------------> GOT NUMBER {}", n);
+		}).subscribe( (n) -> {
+			logger.info("------------> GOT ALERT {}", n);
 		});
 		
 		latch.await();
@@ -45,11 +42,11 @@ public class RandomNumbersServiceClientTest extends AbstractTestNGSpringContextT
 		
 		CountDownLatch latch = new CountDownLatch(1);
 		
-		Flux<Object> randomNumbers = client.getRandomNumbersStreaming("http://localhost:8080");
-		randomNumbers.doOnComplete( () -> {
+		Flux<Alert> alerts = client.getAccountAlertsStreaming("http://localhost:8080");
+		alerts.doOnComplete( () -> {
 			latch.countDown();
 		}).subscribe( (n) -> {
-			logger.info("------------> GOT NUMBER {}", n);
+			logger.info("------------> GOT ALERT {}", n);
 		});
 		
 		latch.await();

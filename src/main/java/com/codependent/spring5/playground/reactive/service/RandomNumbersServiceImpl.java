@@ -24,7 +24,7 @@ public class RandomNumbersServiceImpl implements RandomNumbersService{
 					   double random = Math.random();
 					   logger.info("******* Generated [{}]", random);
 					   return random;
-				   });
+				   }).log();
 	}
 	
 }
