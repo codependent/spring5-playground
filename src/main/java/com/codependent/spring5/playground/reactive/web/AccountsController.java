@@ -21,7 +21,7 @@ public class AccountsController {
 				   .log();
 	}
 	
-	@GetMapping(value="/accounts/alertsStreaming", headers="accept=text/event-stream")
+	@GetMapping(value="/accounts/alertsStreaming", produces="text/event-stream")
 	public Flux<Alert> getAccountAlertsNoPathVariableStreaming() {
 		return Flux.fromArray(new Alert[]{new Alert((long)1, "Alert message"), 
 				              			  new Alert((long)2, "Alert message2"),
