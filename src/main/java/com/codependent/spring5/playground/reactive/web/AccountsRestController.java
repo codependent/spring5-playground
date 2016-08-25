@@ -1,6 +1,8 @@
 package com.codependent.spring5.playground.reactive.web;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,23 +39,38 @@ public class AccountsRestController {
 		return Flux.<Alert>just(new Alert(id, "Alert message"));
 	}
 	
-	@GetMapping("/accounts/alerts2")
-	public Flux<Alert> getAsyncAlerts(){
+	@GetMapping(value="/accounts/alerts2", produces="text/event-stream")
+	public Publisher<Alert> getAsyncAlerts(){
 
-		return new Flux<Alert>() {
+		return new Publisher<Alert>() {
 
+			private int loops = 5;
+			
 			@Override
 			public void subscribe(Subscriber<? super Alert> s) {
-				int i = 0;
-				while(++i <= 5){
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+				
+				s.onSubscribe(new Subscription() {
+					
+					public void request(long n) {
+						for (long i = 0; i < n; i++) {
+							if(loops-- > 0){
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								s.onNext(new Alert((long)1, "my message" + Math.random()));					
+							}else{
+								s.onComplete();
+								i = n;
+							}
+						}
 					}
-					s.onNext(new Alert((long)1, "my message" + Math.random()));
-				}
-				s.onComplete();
+					@Override
+					public void cancel() {
+						loops = 0;
+					}
+				});
 			}
 		};
 	}
