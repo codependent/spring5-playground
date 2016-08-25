@@ -10,24 +10,26 @@ import com.codependent.spring5.playground.reactive.dto.Alert;
 import reactor.core.publisher.Flux;
 
 @RestController
-public class AccountsController {
+public class AccountsRestController {
 	
 	@GetMapping("/accounts/alerts")
 	public Flux<Alert> getAccountAlertsNoPathVariable() {
-		return Flux.fromArray(new Alert[]{new Alert((long)1, "Alert message"), 
-				              		  	  new Alert((long)2, "Alert message2"),
-				              		  	  new Alert((long)3, "Alert message3")})
-				   .delayMillis(1000)
-				   .log();
+		return Flux.range(1, 3)
+			.map((Integer i) -> {
+			   	return new Alert((long)i, "Alert message"+i);
+			})
+			.delayMillis(1000)
+			.log();
 	}
 	
 	@GetMapping(value="/accounts/alertsStreaming", produces="text/event-stream")
 	public Flux<Alert> getAccountAlertsNoPathVariableStreaming() {
-		return Flux.fromArray(new Alert[]{new Alert((long)1, "Alert message"), 
-				              			  new Alert((long)2, "Alert message2"),
-				              			  new Alert((long)3, "Alert message3")})
-				   .delayMillis(1000)
-				   .log();
+		return Flux.range(1, 3)
+			.map((Integer i) -> {
+		    	return new Alert((long)i, "Alert message"+i);
+		    })
+			.delayMillis(1000)
+			.log();
 	}
 	
 	@GetMapping("/accounts/{id}/alerts")

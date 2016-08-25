@@ -11,7 +11,7 @@ import com.codependent.spring5.playground.reactive.service.RandomNumbersService;
 import reactor.core.publisher.Flux;
 
 @RestController
-public class RandomNumbersController {
+public class RandomNumbersRestController {
 	
 	@Autowired
 	@Qualifier("randomNumbersServiceImpl")
