@@ -14,7 +14,11 @@ public class RandomNumbersHttpServiceImpl implements RandomNumbersService{
 	private RandomNumbersServiceClient rns;
 	
 	public Flux<Double> generateRandomNumbers(int amount, int delay){
-		return rns.getRandomNumbers("http://localhost:8080/randomNumbers");
+		return rns.getRandomNumbers("http://localhost:8080");
+	}
+	
+	public Flux<Object> generateRandomNumbersStreaming(int amount, int delay){
+		return rns.getRandomNumbersStreaming("http://localhost:8080");
 	}
 	
 }

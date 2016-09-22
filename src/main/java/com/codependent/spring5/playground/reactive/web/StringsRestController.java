@@ -5,12 +5,10 @@ import java.time.Duration;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import org.springframework.http.codec.SseEvent;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.deser.std.NullifyingDeserializer;
 
 import reactor.core.publisher.Flux;
 
@@ -43,13 +41,10 @@ public class StringsRestController {
         return new StringsPublisher(5);
 	}
 	
-	@RequestMapping("/sse/event")
-    Flux<SseEvent> sse() {
+	@RequestMapping("/strings/sse/event")
+    Flux<ServerSentEvent<String>> sse() {
         return Flux.interval(Duration.ofMillis(100)).map(l -> {
-            SseEvent event = new SseEvent();
-            event.setId(Long.toString(l));
-            event.setData("foo");
-            event.setComment("bar");
+        	ServerSentEvent<String> event = ServerSentEvent.builder("foo").build();
             return event;
         }).take(2);
     }

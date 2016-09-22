@@ -2,10 +2,10 @@ package com.codependent.spring5.playground.reactive.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.codec.SseEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codependent.spring5.playground.reactive.service.RandomNumbersHttpServiceImpl;
 import com.codependent.spring5.playground.reactive.service.RandomNumbersService;
 
 import reactor.core.publisher.Flux;
@@ -34,6 +34,12 @@ public class RandomNumbersRestController {
 	@GetMapping("/randomNumbersClient")
 	public Flux<Double> getReactiveRandomNumbersWithClient() {
 		Flux<Double> randomNumbersFlux = rsn2.generateRandomNumbers(10, 500);
+		return randomNumbersFlux.log();
+	}
+	
+	@GetMapping(value="/randomNumbersClientStreaming", headers="accept=text/event-stream")
+	public Flux<Object> getReactiveRandomNumbersWithClientStreaming() {
+		Flux<Object> randomNumbersFlux = ((RandomNumbersHttpServiceImpl)rsn2).generateRandomNumbersStreaming(10, 500);
 		return randomNumbersFlux.log();
 	}
 	

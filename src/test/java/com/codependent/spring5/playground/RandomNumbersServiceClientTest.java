@@ -48,7 +48,10 @@ public class RandomNumbersServiceClientTest extends AbstractTestNGSpringContextT
 		Flux<Object> randomNumbers = client.getRandomNumbersStreaming("http://localhost:8080");
 		randomNumbers.doOnComplete( () -> {
 			latch.countDown();
-		}).subscribe( (n) -> {
+		}).doOnNext( c -> {
+			System.out.println("HERE");
+		})
+		.subscribe( (n) -> {
 			logger.info("------------> GOT NUMBER {}", n);
 		});
 		
