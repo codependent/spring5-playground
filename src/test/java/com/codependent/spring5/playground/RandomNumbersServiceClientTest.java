@@ -45,7 +45,7 @@ public class RandomNumbersServiceClientTest extends AbstractTestNGSpringContextT
 		
 		CountDownLatch latch = new CountDownLatch(1);
 		
-		Flux<Object> randomNumbers = client.getRandomNumbersStreaming("http://localhost:8080");
+		Flux<Double> randomNumbers = client.getRandomNumbersStreaming("http://localhost:8080");
 		randomNumbers.doOnComplete( () -> {
 			latch.countDown();
 		}).doOnNext( c -> {

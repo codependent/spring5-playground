@@ -38,8 +38,8 @@ public class RandomNumbersRestController {
 	}
 	
 	@GetMapping(value="/randomNumbersClientStreaming", headers="accept=text/event-stream")
-	public Flux<Object> getReactiveRandomNumbersWithClientStreaming() {
-		Flux<Object> randomNumbersFlux = ((RandomNumbersHttpServiceImpl)rsn2).generateRandomNumbersStreaming(10, 500);
+	public Flux<Double> getReactiveRandomNumbersWithClientStreaming() {
+		Flux<Double> randomNumbersFlux = ((RandomNumbersHttpServiceImpl)rsn2).generateRandomNumbersStreaming(10, 500);
 		return randomNumbersFlux.log();
 	}
 	
