@@ -41,8 +41,8 @@ public class StringsRestController {
         return new StringsPublisher(5);
 	}
 	
-	@RequestMapping("/strings/sse/event")
-    Flux<ServerSentEvent<String>> sse() {
+	@RequestMapping("/strings/serversentsevent")
+    public Flux<ServerSentEvent<String>> sse() {
         return Flux.interval(Duration.ofMillis(100)).map(l -> {
         	ServerSentEvent<String> event = ServerSentEvent.builder("foo").build();
             return event;
