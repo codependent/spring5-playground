@@ -2,6 +2,11 @@ package com.codependent.spring5.playground.reactive.web;
 
 import java.util.Date;
 
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -18,6 +23,8 @@ import reactor.core.publisher.Flux;
 @RestController
 public class AccountsRestController {
 	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	@Autowired
 	private AccountService accountService;
 	
@@ -31,13 +38,15 @@ public class AccountsRestController {
 	public Flux<Alert> getAccountAlertsStreaming(@PathVariable Integer id) {
 		return accountService.getAccountAlertsStreaming(id);
 	}
-	/*
+
 	@GetMapping(value="/accounts/alerts2", produces="text/event-stream")
 	public Publisher<Alert> getAsyncAlerts(){
 
 		return new Publisher<Alert>() {
 
-			private int loops = 5;
+			private volatile int current = 0;
+			private volatile int maxLoops = 5;
+			private volatile boolean onCompletedSignaled = false;
 			
 			@Override
 			public void subscribe(Subscriber<? super Alert> s) {
@@ -45,27 +54,35 @@ public class AccountsRestController {
 				s.onSubscribe(new Subscription() {
 					
 					public void request(long n) {
-						for (long i = 0; i < n; i++) {
-							if(loops-- > 0){
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
-								s.onNext(new Alert((long)1, "my message" + Math.random()));					
-							}else{
+						logger.info("Requested {}",n);
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						if(current++ < maxLoops){
+							logger.info("Sending Message {}", current);
+							s.onNext(new Alert((long)current , "my message" + Math.random()));
+							logger.info("Sent Message {}", current );
+						}
+						logger.info("current {}", current );
+						logger.info("maxLoop {}", maxLoops );
+						if(current >= maxLoops){
+							if(!onCompletedSignaled){
+								logger.info("Completed!");
 								s.onComplete();
-								i = n;
+								onCompletedSignaled = true;
 							}
 						}
 					}
 					@Override
 					public void cancel() {
-						loops = 0;
+						logger.info("Cancel!");
+						current = maxLoops;
 					}
 				});
 			}
 		};
-	}*/
+	}
 }
 
