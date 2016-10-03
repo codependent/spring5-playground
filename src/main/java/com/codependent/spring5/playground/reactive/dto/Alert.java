@@ -6,18 +6,30 @@ public class Alert implements Serializable{
 
 	private static final long serialVersionUID = -1838463717230679389L;
 
+	private Integer accountId;
+	
 	private Long alertId;
 	
 	private String message;
 
 	public Alert(){}
 	
-	public Alert(Long alertId, String message) {
+	public Alert(Integer accountId, Long alertId, String message) {
 		super();
+		this.accountId = accountId;
 		this.alertId = alertId;
 		this.message = message;
 	}
 	
+
+	public Integer getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Integer accountId) {
+		this.accountId = accountId;
+	}
+
 	public Long getAlertId() {
 		return alertId;
 	}
@@ -36,7 +48,7 @@ public class Alert implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Alert [alertId=" + alertId + ", message=" + message + "]";
+		return "Alert [alertId=" + alertId + ", message=" + message + ", accountId=" + accountId + "]";
 	}
 	
 }

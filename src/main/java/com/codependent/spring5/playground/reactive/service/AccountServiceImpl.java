@@ -2,9 +2,6 @@ package com.codependent.spring5.playground.reactive.service;
 
 import java.util.Date;
 
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import org.springframework.stereotype.Service;
 
 import com.codependent.spring5.playground.reactive.dto.Account;
@@ -23,7 +20,7 @@ public class AccountServiceImpl implements AccountService{
 	public Flux<Alert> getAccountAlerts(Integer id, Date from, Date until){
 		return Flux.range(1, 50)
 				.map((Integer i) -> {
-					return new Alert((long)i, "Alert message"+i);
+					return new Alert(i, (long)Math.round(Math.random()*1000), "Alert message"+i);
 				})
 				.delayMillis(500)
 				.log();
@@ -32,7 +29,7 @@ public class AccountServiceImpl implements AccountService{
 	public Flux<Alert> getAccountAlertsStreaming(Integer id){
 		return Flux.range(1, 50)
 				.map((Integer i) -> {
-					return new Alert((long)i, "Alert message"+i);
+					return new Alert(i, (long)Math.round(Math.random()*1000), "Alert message"+i);
 				})
 				.delayMillis(1000)
 				.log();
