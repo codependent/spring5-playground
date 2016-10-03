@@ -3,6 +3,9 @@ package com.codependent.spring5.playground.reactive.client;
 import static org.springframework.web.client.reactive.ClientWebRequestBuilders.get;
 import static org.springframework.web.client.reactive.ResponseExtractors.bodyStream;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.reactive.WebClient;
@@ -21,9 +24,11 @@ public class AccountsServiceClient {
 	@Autowired
 	private ObjectMapper jacksonObjectMapper;
 	
-	public Flux<Alert> getAccountAlerts(String serviceBaseUrl){
+	public Flux<Alert> getAccountAlerts(String serviceBaseUrl, Date from, Date until){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String url = serviceBaseUrl+"/accounts/alerts?from="+sdf.format(from)+"&until="+sdf.format(until);
 		Flux<Alert> response = webClient
-				.perform(get(serviceBaseUrl+"/accounts/alerts"))
+				.perform(get(url))
 				.extract(bodyStream(Alert.class));
 		return response;
 	}

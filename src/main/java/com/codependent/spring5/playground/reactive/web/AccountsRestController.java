@@ -1,44 +1,37 @@
 package com.codependent.spring5.playground.reactive.web;
 
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codependent.spring5.playground.reactive.dto.Alert;
+import com.codependent.spring5.playground.reactive.service.AccountService;
 
 import reactor.core.publisher.Flux;
 
 @RestController
 public class AccountsRestController {
 	
-	@GetMapping("/accounts/alerts")
-	public Flux<Alert> getAccountAlertsNoPathVariable() {
-		return Flux.range(1, 3)
-			.map((Integer i) -> {
-			   	return new Alert((long)i, "Alert message"+i);
-			})
-			.delayMillis(1000)
-			.log();
-	}
-	
-	@GetMapping(value="/accounts/alertsStreaming", produces="text/event-stream")
-	public Flux<Alert> getAccountAlertsNoPathVariableStreaming() {
-		return Flux.range(1, 3)
-			.map((Integer i) -> {
-		    	return new Alert((long)i, "Alert message"+i);
-		    })
-			.delayMillis(1000)
-			.log();
-	}
+	@Autowired
+	private AccountService accountService;
 	
 	@GetMapping("/accounts/{id}/alerts")
-	public Flux<Alert> getAccountAlertsWithPathVariable(@PathVariable Long id) {
-		return Flux.<Alert>just(new Alert(id, "Alert message"));
+	public Flux<Alert> getAccountAlertsInHistory(@PathVariable Integer id, @DateTimeFormat(iso=ISO.DATE) @RequestParam Date from, 
+			 @DateTimeFormat(iso=ISO.DATE) @RequestParam Date until) {
+		return accountService.getAccountAlerts(id, from, until);
 	}
 	
+	@GetMapping(value="/accounts/{id}/alerts/live", produces="text/event-stream")
+	public Flux<Alert> getAccountAlertsStreaming(@PathVariable Integer id) {
+		return accountService.getAccountAlertsStreaming(id);
+	}
+	/*
 	@GetMapping(value="/accounts/alerts2", produces="text/event-stream")
 	public Publisher<Alert> getAsyncAlerts(){
 
@@ -73,5 +66,6 @@ public class AccountsRestController {
 				});
 			}
 		};
-	}
+	}*/
 }
+

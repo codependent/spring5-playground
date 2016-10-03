@@ -1,5 +1,6 @@
 package com.codependent.spring5.playground;
 
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class AccountsServiceClientTest extends AbstractTestNGSpringContextTests{
 		
 		CountDownLatch latch = new CountDownLatch(1);
 		
-		Flux<Alert> alerts = client.getAccountAlerts("http://localhost:8080");
+		Flux<Alert> alerts = client.getAccountAlerts("http://localhost:8080", new Date(), new Date());
 		alerts.doOnComplete( () -> {
 			latch.countDown();
 		}).subscribe( (n) -> {
