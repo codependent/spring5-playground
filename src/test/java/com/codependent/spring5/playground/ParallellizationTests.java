@@ -1,7 +1,6 @@
 package com.codependent.spring5.playground;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +11,10 @@ import org.testng.annotations.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import rx.Single;
 
 @Test
-public class PerformanceTests {
+public class ParallellizationTests {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -104,16 +104,17 @@ public class PerformanceTests {
 	}
 	
 	/**
-	 * Paralelización correcta, el flatMap ejecuta sobre main PERO la invocación está diferida
+	 * IMPORTANTE defer tampoco paraleliza, proporciona una factoría de Mono al que se realizará las suscripción (evaluando 
+	 * la petición HTTP)
 	 */
-	public void testAsyncIO() throws InterruptedException{
+	public void testBlocking5IO() throws InterruptedException{
 		CountDownLatch latch = new CountDownLatch(1);
 		long start = System.currentTimeMillis();
 		flux
 		.log()
 		.flatMap( value -> {
 			logger.info("Processing flatMap for [{}]", value);
-			return requestMonoDeferred(url, value);})
+			return requestMonoDefer(url, value);})
 		.doOnNext( val -> logger.info("GOT [{}]", val) )
 		.doOnComplete(() -> {
 			logger.info("TOTAL TIME -> {}ms", (System.currentTimeMillis()-start ) );
@@ -128,14 +129,14 @@ public class PerformanceTests {
 	/**
 	 * Paralelización correcta, el flatMap ejecuta sobre main PERO la invocación está diferida
 	 */
-	public void testAsyncIO2() throws InterruptedException{
+	public void testAsyncIO() throws InterruptedException{
 		CountDownLatch latch = new CountDownLatch(1);
 		long start = System.currentTimeMillis();
 		flux
 		.log()
 		.flatMap( value -> {
 			logger.info("Processing flatMap for [{}]", value);
-			return requestMonoDeferred2(url, value);})
+			return requestMonoFromCallable(url, value);})
 		.doOnNext( val -> logger.info("GOT [{}]", val) )
 		.doOnComplete(() -> {
 			logger.info("TOTAL TIME -> {}ms", (System.currentTimeMillis()-start ) );
@@ -146,6 +147,8 @@ public class PerformanceTests {
 		
 		latch.await();
 	}
+	
+
 	
 	public void testSerial() throws InterruptedException{
 		CountDownLatch latch = new CountDownLatch(12);
@@ -189,6 +192,43 @@ public class PerformanceTests {
 		latch.await();
 	}
 	
+	public void testMonoDefer() throws InterruptedException{
+		Mono<HttpStatus> mono = Mono
+			.defer( () -> {
+				logger.info("Preparing Mono");
+				return requestMono(url, "rxjava");
+			})
+			.log();
+		
+		logger.info("Before subscribing");
+		mono.subscribe( value -> logger.info("{}",value));
+
+	}
+	
+	public void testSingleDefer() throws InterruptedException{
+		Single<HttpStatus> observable = Single.defer( () -> {
+			logger.info("Preparing Observable");
+			return Single.just(request(url, "rxjava"));
+		}).doOnSubscribe(() -> logger.info("Subscribing"));
+		
+		logger.info("Before subscribing");
+		observable.subscribe( value -> logger.info("{}",value));
+
+	}
+	
+	public void testMonoFromCallable() throws InterruptedException{
+		Mono<HttpStatus> mono = Mono
+			.fromCallable( () -> {
+				logger.info("Preparing Mono");
+				return request(url, "rxjava");
+			})
+			.log();
+		
+		logger.info("Before subscribing");
+		mono.subscribe( value -> logger.info("{}",value));
+	
+	}
+	
 	private HttpStatus request(String urlTemplate, String value) {
 		logger.info("REQUESTING");
 		return restTemplate.getForEntity(String.format(urlTemplate, value), String.class, value).getStatusCode();
@@ -198,14 +238,15 @@ public class PerformanceTests {
 		return Mono.just(request(urlTemplate, value));
 	}
 	
-	private Mono<HttpStatus> requestMonoDeferred(String urlTemplate, String value) {
+	private Mono<HttpStatus> requestMonoFromCallable(String urlTemplate, String value) {
 		return Mono.fromCallable( () -> request(urlTemplate, value) )
 				.subscribeOn(Schedulers.parallel());
 	}	
 	
-	private Mono<HttpStatus> requestMonoDeferred2(String urlTemplate, String value) {
+	private Mono<HttpStatus> requestMonoDefer(String urlTemplate, String value) {
 		return Mono.defer( () -> 
-			Mono.just(request(urlTemplate, value)).subscribeOn(Schedulers.parallel()) 
+			Mono.just(request(urlTemplate, value))
+				.subscribeOn(Schedulers.parallel()) 
 		);
 	}	
 }
