@@ -180,7 +180,10 @@ public class ParallellizationTests {
 			return Flux.just(value, value+"fm", value+"fm2", value+"fm3", value+"fm4", value+"fm5", value+"fm6")
 				.doOnNext( val -> logger.info(" VAL -> [{}]", val)) 
 				.doOnComplete( 
-						() -> latch.countDown())
+						() -> {
+							logger.info("flux from flatMap onComplete()");
+							latch.countDown();
+						})
 				.subscribeOn(Schedulers.elastic());
 		}, 11)
 		.doOnComplete(() -> {
