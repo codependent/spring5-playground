@@ -29,7 +29,7 @@ public class AccountsServiceClientTest extends AbstractTestNGSpringContextTests{
 		
 		CountDownLatch latch = new CountDownLatch(1);
 		
-		Flux<Alert> alerts = client.getAccountAlerts("http://localhost:8080", new Date(), new Date());
+		Flux<Alert> alerts = client.getAccountAlerts(1, new Date(), new Date());
 		alerts.doOnComplete( () -> {
 			latch.countDown();
 		}).subscribe( (n) -> {
@@ -43,7 +43,7 @@ public class AccountsServiceClientTest extends AbstractTestNGSpringContextTests{
 		
 		CountDownLatch latch = new CountDownLatch(1);
 		
-		Flux<Alert> alerts = client.getAccountAlertsStreaming("http://localhost:8080");
+		Flux<Alert> alerts = client.getAccountAlertsStreaming(1);
 		alerts.doOnComplete( () -> {
 			latch.countDown();
 		}).subscribe( (n) -> {

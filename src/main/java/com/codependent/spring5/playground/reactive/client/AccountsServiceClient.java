@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.reactive.WebClient;
 
@@ -24,18 +25,22 @@ public class AccountsServiceClient {
 	@Autowired
 	private ObjectMapper jacksonObjectMapper;
 	
-	public Flux<Alert> getAccountAlerts(String serviceBaseUrl, Date from, Date until){
+	@Value("${alert.service.baseUrl}")
+	private String serviceBaseUrl;
+	
+	public Flux<Alert> getAccountAlerts(int accountId, Date from, Date until){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String url = serviceBaseUrl+"/accounts/alerts?from="+sdf.format(from)+"&until="+sdf.format(until);
+		String url = serviceBaseUrl+"/accounts/"+accountId+"/alerts?from="+sdf.format(from)+"&until="+sdf.format(until);
 		Flux<Alert> response = webClient
 				.perform(get(url))
-				.extract(bodyStream(Alert.class));
+				.extract(bodyStream(Alert.class))
+				.log();
 		return response;
 	}
 	
-	public Flux<Alert> getAccountAlertsStreaming(String serviceBaseUrl){
+	public Flux<Alert> getAccountAlertsStreaming(int accountId){
 		Flux<Alert> response = webClient
-				.perform(get(serviceBaseUrl+"/accounts/alertsStreaming").header("Accept", "text/event-stream"))
+				.perform(get(serviceBaseUrl+"/accounts/"+accountId+"/alerts/live").header("Accept", "text/event-stream"))
 				.extract(bodyStream(String.class))
 				.map((e -> {
 					try {
@@ -47,7 +52,8 @@ public class AccountsServiceClient {
 						return null;
 					}
 					
-				}));
+				}))
+				.log();
 		return response;
 	}
 	

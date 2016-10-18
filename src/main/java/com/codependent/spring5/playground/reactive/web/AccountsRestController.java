@@ -3,8 +3,6 @@ package com.codependent.spring5.playground.reactive.web;
 import java.util.Date;
 import java.util.Enumeration;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import org.reactivestreams.Publisher;
@@ -21,9 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codependent.spring5.playground.reactive.client.AccountsServiceClient;
 import com.codependent.spring5.playground.reactive.dto.Alert;
-import com.codependent.spring5.playground.reactive.message.AlertMessageListener;
 import com.codependent.spring5.playground.reactive.message.AlertEmitterProcessor;
+import com.codependent.spring5.playground.reactive.message.AlertMessageListener;
 import com.codependent.spring5.playground.reactive.message.MockTextMessage;
 import com.codependent.spring5.playground.reactive.service.AccountService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,6 +44,9 @@ public class AccountsRestController {
 	private AlertMessageListener messageListener;
 	
 	@Autowired
+	private AccountsServiceClient accountsServiceClient;
+	
+	@Autowired
 	private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 	
 	@GetMapping("/accounts/{id}/alerts")
@@ -53,17 +55,53 @@ public class AccountsRestController {
 		return accountService.getAccountAlerts(id, from, until);
 	}
 	
+	/**
+	 * Gets the alert streaming
+	 * @param id
+	 * @return
+	 */
 	@GetMapping(value="/accounts/{id}/alerts/live", produces="text/event-stream")
 	public Flux<Alert> getAccountAlertsStreaming(@PathVariable Integer id) {
 		return accountService.getAccountAlertsStreaming(id);
 	}
 	
+	/**
+	 * Gets the alert streaming from a hot source (EmitterProcessor)
+	 * @param id
+	 * @return
+	 */
 	@GetMapping(value="/accounts/{id}/alerts/live2", produces="text/event-stream")
 	public Flux<Alert> getAccountAlertsStreaming2(@PathVariable Integer id) {
 		return alertTopicProcessor.getProcessor()
 			.log().filter( a -> a.getAccountId().equals(id) );
 	}
 	
+	/**
+	 * Gets the alert streaming using a WebClient
+	 * @param id
+	 * @return
+	 */
+	@GetMapping(value="/accounts/{id}/alerts/live3", produces="text/event-stream")
+	public Flux<Alert> getAccountAlertsWebClientStreaming(@PathVariable Integer id) {
+		return accountsServiceClient.getAccountAlertsStreaming(id);
+	}
+	
+	/**
+	 * Gets the alert streaming using a WebClient that doesn't get streamed values
+	 * It waits until it gets all the results and then propagates them
+	 * @param id
+	 * @return
+	 */
+	@GetMapping(value="/accounts/{id}/alerts/live4", produces="text/event-stream")
+	public Flux<Alert> getAccountAlertsWebClientNoStreamingEndpoint(@PathVariable Integer id) {
+		return accountsServiceClient.getAccountAlerts(1, new Date(), new Date());
+	}
+	
+	/**
+	 * Simulates the addition of an Alert to a queue
+	 * @param id
+	 * @throws JsonProcessingException
+	 */
 	@GetMapping(value="/mock/accounts/{id}/alerts/put", produces="text/event-stream")
 	public void putAlert(@PathVariable Integer id) throws JsonProcessingException {
 		Alert alert = new Alert(id, (long)Math.round(Math.random()*10), "Message");
