@@ -6,6 +6,7 @@ import static org.springframework.web.client.reactive.ResponseExtractors.bodyStr
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,9 +43,12 @@ public class AccountsServiceClient {
 		Flux<Alert> response = webClient
 				.perform(get(serviceBaseUrl+"/accounts/"+accountId+"/alerts/live").header("Accept", "text/event-stream"))
 				.extract(bodyStream(String.class))
+				.filter( e -> {
+					e = e.substring(e.indexOf(":")+1);
+					return StringUtils.isNotBlank(e);
+				})
 				.map((e -> {
 					try {
-						e = e.substring(e.indexOf(":")+1);
 						Alert a = jacksonObjectMapper.readValue(e, Alert.class);
 						return a;
 					} catch (Exception e1) {
