@@ -294,4 +294,28 @@ public class MockTextMessage implements TextMessage{
 		return text;
 	}
 
+	@Override
+	public <T> T getBody(Class<T> arg0) throws JMSException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long getJMSDeliveryTime() throws JMSException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isBodyAssignableTo(Class arg0) throws JMSException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setJMSDeliveryTime(long arg0) throws JMSException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
