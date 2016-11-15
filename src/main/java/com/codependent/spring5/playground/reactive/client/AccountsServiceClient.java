@@ -1,19 +1,16 @@
 package com.codependent.spring5.playground.reactive.client;
 
-import static org.springframework.web.client.reactive.ClientWebRequestBuilders.get;
-import static org.springframework.web.client.reactive.ResponseExtractors.bodyStream;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.reactive.ClientRequest;
 import org.springframework.web.client.reactive.WebClient;
 
 import com.codependent.spring5.playground.reactive.dto.Alert;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reactor.core.publisher.Flux;
 
@@ -23,40 +20,25 @@ public class AccountsServiceClient {
 	@Autowired
 	private WebClient webClient;
 	
-	@Autowired
-	private ObjectMapper jacksonObjectMapper;
-	
-	@Value("${alert.service.baseUrl}")
-	private String serviceBaseUrl;
+	//@Value("${alert.service.baseUrl}")
+	private String serviceBaseUrl = "http://localhost:8080";
 	
 	public Flux<Alert> getAccountAlerts(int accountId, Date from, Date until){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String url = serviceBaseUrl+"/accounts/"+accountId+"/alerts?from="+sdf.format(from)+"&until="+sdf.format(until);
+		String url = serviceBaseUrl+"/accounts/{accountId}/alerts?from={from}&until={until}";
+		final ClientRequest<Void> request = ClientRequest.GET(url, accountId, sdf.format(from), sdf.format(until))
+				.accept(MediaType.TEXT_EVENT_STREAM).build();
 		Flux<Alert> response = webClient
-				.perform(get(url))
-				.extract(bodyStream(Alert.class))
+				.retrieveFlux(request, Alert.class)
 				.log();
 		return response;
 	}
 	
 	public Flux<Alert> getAccountAlertsStreaming(int accountId){
+		final ClientRequest<Void> request = ClientRequest.GET(serviceBaseUrl+"/accounts/{accountId}/alerts/live", accountId)
+				.accept(MediaType.TEXT_EVENT_STREAM).build();
 		Flux<Alert> response = webClient
-				.perform(get(serviceBaseUrl+"/accounts/"+accountId+"/alerts/live").header("Accept", "text/event-stream"))
-				.extract(bodyStream(String.class))
-				.filter( e -> {
-					e = e.substring(e.indexOf(":")+1);
-					return StringUtils.isNotBlank(e);
-				})
-				.map((e -> {
-					try {
-						Alert a = jacksonObjectMapper.readValue(e, Alert.class);
-						return a;
-					} catch (Exception e1) {
-						e1.printStackTrace();
-						return null;
-					}
-					
-				}))
+				.retrieveFlux(request, Alert.class)
 				.log();
 		return response;
 	}
