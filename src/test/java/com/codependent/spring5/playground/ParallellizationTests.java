@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 import org.testng.annotations.Test;
 
+import io.reactivex.Single;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import rx.Single;
 
 @Test
 public class ParallellizationTests {
@@ -212,7 +212,7 @@ public class ParallellizationTests {
 		Single<HttpStatus> observable = Single.defer( () -> {
 			logger.info("Preparing Observable");
 			return Single.just(request(url, "rxjava"));
-		}).doOnSubscribe(() -> logger.info("Subscribing"));
+		}).doOnSubscribe(s -> logger.info("Subscribing"));
 		
 		logger.info("Before subscribing");
 		observable.subscribe( value -> logger.info("{}",value));

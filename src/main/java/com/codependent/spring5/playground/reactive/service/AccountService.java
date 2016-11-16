@@ -5,6 +5,7 @@ import java.util.Date;
 import com.codependent.spring5.playground.reactive.dto.Account;
 import com.codependent.spring5.playground.reactive.dto.Alert;
 
+import io.reactivex.Flowable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -15,5 +16,7 @@ public interface AccountService {
 	Flux<Alert> getAccountAlerts(Integer id, Date from, Date until);
 	
 	Flux<Alert> getAccountAlertsStreaming(Integer id);
+	
+	Flowable<Alert> getAccountAlertsFlowable(Integer id, Date from, Date until);
 	
 }

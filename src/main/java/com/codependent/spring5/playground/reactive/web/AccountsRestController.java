@@ -26,6 +26,7 @@ import com.codependent.spring5.playground.reactive.message.MockTextMessage;
 import com.codependent.spring5.playground.reactive.service.AccountService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import io.reactivex.Flowable;
 import reactor.core.publisher.Flux;
 
 @RestController
@@ -52,6 +53,12 @@ public class AccountsRestController {
 	public Flux<Alert> getAccountAlertsInHistory(@PathVariable Integer id, @DateTimeFormat(iso=ISO.DATE) @RequestParam Date from, 
 			 @DateTimeFormat(iso=ISO.DATE) @RequestParam Date until) {
 		return accountService.getAccountAlerts(id, from, until);
+	}
+	
+	@GetMapping("/accounts/{id}/alerts2")
+	public Flowable<Alert> getAccountAlertsInHistoryRxJava2(@PathVariable Integer id, @DateTimeFormat(iso=ISO.DATE) @RequestParam Date from, 
+			 @DateTimeFormat(iso=ISO.DATE) @RequestParam Date until) {
+		return accountService.getAccountAlertsFlowable(id, from, until);
 	}
 	
 	/**
