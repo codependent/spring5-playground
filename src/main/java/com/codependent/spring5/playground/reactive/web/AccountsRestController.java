@@ -55,7 +55,7 @@ public class AccountsRestController {
 		return accountService.getAccountAlerts(id, from, until);
 	}
 	
-	@GetMapping("/accounts/{id}/alerts2")
+	@GetMapping("/accounts/{id}/alertsRxJava2")
 	public Flowable<Alert> getAccountAlertsInHistoryRxJava2(@PathVariable Integer id, @DateTimeFormat(iso=ISO.DATE) @RequestParam Date from, 
 			 @DateTimeFormat(iso=ISO.DATE) @RequestParam Date until) {
 		return accountService.getAccountAlertsFlowable(id, from, until);
@@ -101,6 +101,16 @@ public class AccountsRestController {
 	@GetMapping(value="/accounts/{id}/alerts/live4", produces="text/event-stream")
 	public Flux<Alert> getAccountAlertsWebClientNoStreamingEndpoint(@PathVariable Integer id) {
 		return accountsServiceClient.getAccountAlerts(1, new Date(), new Date());
+	}
+	
+	/**
+	 * Gets the alert streaming
+	 * @param id
+	 * @return
+	 */
+	@GetMapping(value="/accounts/{id}/alerts/liveRxJava2", produces="text/event-stream")
+	public Flowable<Alert> getAccountAlertsStreamingRxJava2(@PathVariable Integer id) {
+		return accountService.getAccountAlertsStreamingFlowable(id);
 	}
 	
 	/**

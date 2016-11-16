@@ -19,4 +19,6 @@ public interface AccountService {
 	
 	Flowable<Alert> getAccountAlertsFlowable(Integer id, Date from, Date until);
 	
+	Flowable<Alert> getAccountAlertsStreamingFlowable(Integer id);
+	
 }

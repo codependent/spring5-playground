@@ -44,4 +44,11 @@ public class AccountServiceImpl implements AccountService{
 			}).doOnNext(  System.out::println);
 	}
 	
+	public Flowable<Alert> getAccountAlertsStreamingFlowable(Integer id){
+		return Flowable.intervalRange(1, 50, 0, 1 ,TimeUnit.SECONDS)
+				.map((Long i) -> {
+					return new Alert(i.intValue(), (long)Math.round(Math.random()*1000), "Alert message"+i);
+				}).doOnNext(  System.out::println);
+	}
+	
 }
