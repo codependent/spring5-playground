@@ -20,8 +20,8 @@ public class AccountsServiceClient {
 	@Autowired
 	private WebClient webClient;
 	
-	//@Value("${alert.service.baseUrl}")
-	private String serviceBaseUrl = "http://localhost:8080";
+	@Value("${alert.service.baseUrl}")
+	private String serviceBaseUrl;
 	
 	public Flux<Alert> getAccountAlerts(int accountId, Date from, Date until){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
