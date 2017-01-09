@@ -205,7 +205,6 @@ public class ParallellizationTests {
 		
 		logger.info("Before subscribing");
 		mono.subscribe( value -> logger.info("{}",value));
-
 	}
 	
 	public void testSingleDefer() throws InterruptedException{
@@ -216,7 +215,6 @@ public class ParallellizationTests {
 		
 		logger.info("Before subscribing");
 		observable.subscribe( value -> logger.info("{}",value));
-
 	}
 	
 	public void testMonoFromCallable() throws InterruptedException{
@@ -229,8 +227,19 @@ public class ParallellizationTests {
 		
 		logger.info("Before subscribing");
 		mono.subscribe( value -> logger.info("{}",value));
-	
 	}
+	
+	public void testSingleFromCallable() throws InterruptedException{
+		Single<HttpStatus> mono = Single
+			.fromCallable( () -> {
+				logger.info("Preparing Mono");
+				return request(url, "rxjava");
+			}).doOnSubscribe(s -> logger.info("Subscribing"));
+		
+		logger.info("Before subscribing");
+		mono.subscribe( value -> logger.info("{}",value));
+	}
+	
 	
 	private HttpStatus request(String urlTemplate, String value) {
 		logger.info("REQUESTING");

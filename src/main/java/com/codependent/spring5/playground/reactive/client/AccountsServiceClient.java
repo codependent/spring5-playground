@@ -1,18 +1,22 @@
 package com.codependent.spring5.playground.reactive.client;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.reactive.ClientRequest;
-import org.springframework.web.client.reactive.WebClient;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.codependent.spring5.playground.reactive.dto.Alert;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 public class AccountsServiceClient {
@@ -28,19 +32,21 @@ public class AccountsServiceClient {
 		String url = serviceBaseUrl+"/accounts/{accountId}/alerts?from={from}&until={until}";
 		final ClientRequest<Void> request = ClientRequest.GET(url, accountId, sdf.format(from), sdf.format(until))
 				.accept(MediaType.TEXT_EVENT_STREAM).build();
-		Flux<Alert> response = webClient
-				.retrieveFlux(request, Alert.class)
+		Flux<Alert> alerts = webClient
+				.exchange(request)
+				.flatMap( response -> response.bodyToFlux(Alert.class))
 				.log();
-		return response;
+		return alerts;
 	}
 	
 	public Flux<Alert> getAccountAlertsStreaming(int accountId){
 		final ClientRequest<Void> request = ClientRequest.GET(serviceBaseUrl+"/accounts/{accountId}/alerts/live", accountId)
 				.accept(MediaType.TEXT_EVENT_STREAM).build();
-		Flux<Alert> response = webClient
-				.retrieveFlux(request, Alert.class)
-				.log();
-		return response;
+		Flux<Alert> alerts = webClient
+				.exchange(request)
+				.flatMap( response -> response.bodyToFlux(Alert.class))
+			 	.log();
+		return alerts;
 	}
 	
 }
