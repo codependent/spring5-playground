@@ -1,10 +1,7 @@
 package com.codependent.spring5.playground.reactive.client;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.codependent.spring5.playground.reactive.dto.Alert;
 
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 @Component
 public class AccountsServiceClient {

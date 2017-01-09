@@ -49,12 +49,26 @@ public class AccountsRestController {
 	@Autowired
 	private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 	
+	/**
+	 * Retrieves alerts from an async java Reactor service
+	 * @param id
+	 * @param from
+	 * @param until
+	 * @return
+	 */
 	@GetMapping("/accounts/{id}/alerts")
 	public Flux<Alert> getAccountAlertsInHistory(@PathVariable Integer id, @DateTimeFormat(iso=ISO.DATE) @RequestParam Date from, 
 			 @DateTimeFormat(iso=ISO.DATE) @RequestParam Date until) {
 		return accountService.getAccountAlerts(id, from, until);
 	}
 	
+	/**
+	 * Retrieves alerts from an async java RxJava2 service
+	 * @param id
+	 * @param from
+	 * @param until
+	 * @return
+	 */
 	@GetMapping("/accounts/{id}/alertsRxJava2")
 	public Flowable<Alert> getAccountAlertsInHistoryRxJava2(@PathVariable Integer id, @DateTimeFormat(iso=ISO.DATE) @RequestParam Date from, 
 			 @DateTimeFormat(iso=ISO.DATE) @RequestParam Date until) {
