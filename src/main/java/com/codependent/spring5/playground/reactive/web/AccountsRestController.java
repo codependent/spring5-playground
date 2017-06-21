@@ -90,7 +90,7 @@ public class AccountsRestController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value="/accounts/{id}/alerts/live2", produces="text/event-stream")
+	@GetMapping(value="/accounts/{id}/alerts/liveFromTopicProcessor", produces="text/event-stream")
 	public Flux<Alert> getAccountAlertsStreaming2(@PathVariable Integer id) {
 		return alertTopicProcessor.getProcessor()
 			.log().filter( a -> a.getAccountId().equals(id) );
@@ -101,7 +101,7 @@ public class AccountsRestController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value="/accounts/{id}/alerts/live3", produces="text/event-stream")
+	@GetMapping(value="/accounts/{id}/alerts/liveFromWebClient", produces="text/event-stream")
 	public Flux<Alert> getAccountAlertsWebClientStreaming(@PathVariable Integer id) {
 		return accountsServiceClient.getAccountAlertsStreaming(id);
 	}
@@ -112,7 +112,7 @@ public class AccountsRestController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value="/accounts/{id}/alerts/live4", produces="text/event-stream")
+	@GetMapping(value="/accounts/{id}/alerts/liveFromWebClientNoStreaming", produces="text/event-stream")
 	public Flux<Alert> getAccountAlertsWebClientNoStreamingEndpoint(@PathVariable Integer id) {
 		return accountsServiceClient.getAccountAlerts(1, new Date(), new Date());
 	}
