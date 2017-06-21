@@ -1,5 +1,6 @@
 package com.codependent.spring5.playground.reactive.service;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -23,8 +24,7 @@ public class AccountServiceImpl implements AccountService{
 		return Flux.range(1, 50)
 				.map((Integer i) -> {
 					return new Alert(i, (long)Math.round(Math.random()*1000), "Alert message"+i);
-				})
-				.delayMillis(500)
+				}).delayElements(Duration.ofMillis(500))
 				.log();
 	}
 	
@@ -33,7 +33,7 @@ public class AccountServiceImpl implements AccountService{
 				.map((Integer i) -> {
 					return new Alert(i, (long)Math.round(Math.random()*1000), "Alert message"+i);
 				})
-				.delayMillis(1000)
+				.delayElements(Duration.ofMillis(1000))
 				.log();
 	}
 	

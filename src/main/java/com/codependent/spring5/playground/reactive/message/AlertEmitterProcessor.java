@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import com.codependent.spring5.playground.reactive.dto.Alert;
 
 import reactor.core.publisher.EmitterProcessor;
-import reactor.core.publisher.TopicProcessor;
 
 @Component
 public class AlertEmitterProcessor {
@@ -19,7 +18,6 @@ public class AlertEmitterProcessor {
 	
 	public AlertEmitterProcessor(){
 		processor = EmitterProcessor.<Alert>create();
-		processor.connect();
 	}
 	
 	public EmitterProcessor<Alert> getProcessor() {

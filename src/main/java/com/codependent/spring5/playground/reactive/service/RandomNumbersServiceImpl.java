@@ -1,5 +1,7 @@
 package com.codependent.spring5.playground.reactive.service;
 
+import java.time.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ public class RandomNumbersServiceImpl implements RandomNumbersService{
 	 */
 	public Flux<Double> generateRandomNumbers(int amount, int delay){
 		return Flux.range(1, amount)
-				   .delayMillis(delay)
+				.delayElements(Duration.ofMillis(delay))
 				   .map(i -> {
 					   double random = Math.random();
 					   logger.info("******* Generated [{}]", random);
