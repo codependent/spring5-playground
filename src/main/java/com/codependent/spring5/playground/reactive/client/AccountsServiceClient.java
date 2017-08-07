@@ -26,7 +26,7 @@ public class AccountsServiceClient {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String url = serviceBaseUrl+"/accounts/{accountId}/alerts?from={from}&until={until}";
 		Flux<Alert> alerts = webClient.get()
-			.uri(url, accountId, from, sdf.format(from), sdf.format(until))
+			.uri(url, accountId, sdf.format(from), sdf.format(until))
 			.accept(MediaType.APPLICATION_JSON)
 			.exchange()
 			.flatMapMany( response -> response.bodyToFlux( Alert.class ))

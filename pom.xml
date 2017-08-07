@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.0.M2</version>
+		<version>2.0.0.M3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -34,22 +34,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-tomcat</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-core</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>io.projectreactor.ipc</groupId>
-			<artifactId>reactor-netty</artifactId>
 		</dependency>
 		
 		<dependency>
@@ -57,12 +41,10 @@
 		    <artifactId>rxjava</artifactId>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/javax.jms/jms-api -->
 		<dependency>
 		    <groupId>javax.jms</groupId>
 		    <artifactId>javax.jms-api</artifactId>
 		</dependency>
-		
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -83,21 +65,6 @@
 		</dependency>
 		
 	</dependencies>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-webflux</artifactId>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-starter-tomcat</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<build>
 		<plugins>

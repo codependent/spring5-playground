@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -80,7 +81,7 @@ public class AccountsRestController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value="/accounts/{id}/alerts/live", produces="text/event-stream")
+	@GetMapping(value="/accounts/{id}/alerts/live", produces=MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<Alert> getAccountAlertsStreaming(@PathVariable Integer id) {
 		return accountService.getAccountAlertsStreaming(id);
 	}
@@ -90,7 +91,7 @@ public class AccountsRestController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value="/accounts/{id}/alerts/liveFromTopicProcessor", produces="text/event-stream")
+	@GetMapping(value="/accounts/{id}/alerts/liveFromTopicProcessor", produces=MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<Alert> getAccountAlertsStreaming2(@PathVariable Integer id) {
 		return alertTopicProcessor.getProcessor()
 			.log().filter( a -> a.getAccountId().equals(id) );
@@ -101,7 +102,7 @@ public class AccountsRestController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value="/accounts/{id}/alerts/liveFromWebClient", produces="text/event-stream")
+	@GetMapping(value="/accounts/{id}/alerts/liveFromWebClient", produces=MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<Alert> getAccountAlertsWebClientStreaming(@PathVariable Integer id) {
 		return accountsServiceClient.getAccountAlertsStreaming(id);
 	}
@@ -112,7 +113,7 @@ public class AccountsRestController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value="/accounts/{id}/alerts/liveFromWebClientNoStreaming", produces="text/event-stream")
+	@GetMapping(value="/accounts/{id}/alerts/liveFromWebClientNoStreaming", produces=MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<Alert> getAccountAlertsWebClientNoStreamingEndpoint(@PathVariable Integer id) {
 		return accountsServiceClient.getAccountAlerts(1, new Date(), new Date());
 	}
@@ -122,7 +123,7 @@ public class AccountsRestController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value="/accounts/{id}/alerts/liveRxJava2", produces="text/event-stream")
+	@GetMapping(value="/accounts/{id}/alerts/liveRxJava2", produces=MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flowable<Alert> getAccountAlertsStreamingRxJava2(@PathVariable Integer id) {
 		return accountService.getAccountAlertsStreamingFlowable(id);
 	}
@@ -132,7 +133,7 @@ public class AccountsRestController {
 	 * @param id
 	 * @throws JsonProcessingException
 	 */
-	@GetMapping(value="/mock/accounts/{id}/alerts/put", produces="text/event-stream")
+	@GetMapping(value="/mock/accounts/{id}/alerts/put", produces=MediaType.TEXT_EVENT_STREAM_VALUE)
 	public void putAlert(@PathVariable Integer id) throws JsonProcessingException {
 		Alert alert = new Alert(id, (long)Math.round(Math.random()*10), "Message");
 		String alertStr = jacksonMessageConverter.getObjectMapper().writeValueAsString(alert);
