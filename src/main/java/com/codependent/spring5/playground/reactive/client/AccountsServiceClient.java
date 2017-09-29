@@ -25,22 +25,35 @@ public class AccountsServiceClient {
 	public Flux<Alert> getAccountAlerts(int accountId, Date from, Date until){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String url = serviceBaseUrl+"/accounts/{accountId}/alerts?from={from}&until={until}";
-		Flux<Alert> alerts = webClient.get()
+		/*Flux<Alert> alerts = webClient.get()
 			.uri(url, accountId, sdf.format(from), sdf.format(until))
 			.accept(MediaType.APPLICATION_JSON)
 			.exchange()
 			.flatMapMany( response -> response.bodyToFlux( Alert.class ))
-			.log();
+			.log();*/
+		Flux<Alert> alerts = webClient.get()
+				.uri(url, accountId, sdf.format(from), sdf.format(until))
+				.accept(MediaType.APPLICATION_JSON)
+				.retrieve()
+				.bodyToFlux(Alert.class)
+				.log();
 		return alerts;
 	}
 	
 	public Flux<Alert> getAccountAlertsStreaming(int accountId){
 		String url = serviceBaseUrl+"/accounts/{accountId}/alerts/live";
+		/*
 		Flux<Alert> alerts = webClient.get()
 				.uri(url, accountId)
 				.accept(MediaType.TEXT_EVENT_STREAM)
 				.exchange()
 				.flatMapMany( response -> response.bodyToFlux( Alert.class ))
+				.log();*/
+		Flux<Alert> alerts = webClient.get()
+				.uri(url, accountId)
+				.accept(MediaType.TEXT_EVENT_STREAM)
+				.retrieve()
+				.bodyToFlux(Alert.class)
 				.log();
 		return alerts;
 	}
